@@ -1,36 +1,42 @@
 class BallsAnimation {
   constructor(container) {
     this._container = container;
-    this._balls = [
-      new Ball(container, new Vector2f(1, 0), 10, 13, 50, 240),
-      new Ball(container, new Vector2f(0, 0), 10, 13, 450, 260),
-      new Ball(container, new Vector2f(1, 2), 10, 13, 450, 50),
-      new Ball(container, new Vector2f(-1, 3), 10, 13, 50, 450),
-      new Ball(container, new Vector2f(1, 2), 10, 13, 100, 50),
-      new Ball(container, new Vector2f(-1, 3), 10, 13, 100, 450)
+
+    let ball1 = new Ball(50, 240, 22, 4);
+    let ball2 = new Ball(450, 260, 12, 4);
+    ball1.setVelocity(1, 0);
+    ball2.setVelocity(-1, 0);
+    this._drawableBalls = [
+      new DrawableBall(container, ball1, "red"),
+      new DrawableBall(container, ball2, "blue")
     ];
-    this.refresh();
+
+
     this._interval = 0;
   }
 
   start() {
     this._interval = setInterval(() => {
-      this.move();
-      this.refresh();
-    }, 100);
+      this.update();
+      this.render();
+    }, 10);
 
   }
 
-  move() {
-    for (let i = 0; i < this._balls.length; ++i) {
+  update() {
+    for (let i = 0; i < this._drawableBalls.length; ++i) {
+      let firstBall = this._drawableBalls[i].ball;
       for (let j = 0; j < i; ++j) {
-        this.collide(this._balls[i], this._balls[j]);
+        let secondBall = this._drawableBalls[j].ball;
+        this.collide(firstBall, secondBall);
       }
     }
 
-    for (let ball of this._balls) {
+    for (let drawableBall of this._drawableBalls) {
+      let ball = drawableBall.ball;
       //left
       if (ball.x - ball.radius <= 0) {
+        console.log(ball.x + ' --- ' + ball.radius);
         ball.velocity.x = Math.abs(ball.velocity.x);
       }
       //right 
@@ -49,13 +55,9 @@ class BallsAnimation {
     }
   }
 
-  refresh() {
-    for (let i = 0; i < this._balls.length; ++i) {
-      let ball = this._balls[i];
-      let ballDom = document.getElementsByClassName('ball')[i];
-
-      ballDom.style.top = ball.y - ball.radius + 'px';
-      ballDom.style.left = ball.x - ball.radius + 'px';
+  render() {
+    for (let i = 0; i < this._drawableBalls.length; ++i) {
+      this._drawableBalls[i].draw();
     }
   }
 
@@ -99,7 +101,8 @@ class BallsAnimation {
     first.velocity = forwardVec1.add(colVelocity1);
     second.velocity = forwardVec2.add(colVelocity2);
 
-    //this.stop();
+    console.log('First velocity: ' + first.velocity);
+    console.log('Second velocity: ' + second.velocity);
   }
 
   projection(v1, v2) {

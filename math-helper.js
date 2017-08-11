@@ -10,4 +10,8 @@ class MathHelper {
       ((weight1 - weight2) * velocity1.y + 2 * weight2 * velocity2.y) / (weight1 + weight2),
     );
   }
+
+  static sphereVolume(r) {
+    return 4 / 3 * Math.PI * r * r * r;
+  }
 }

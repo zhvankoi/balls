@@ -1,5 +1,5 @@
 class Ball {
-  constructor(dom, velocity, weight, radius, x = 1, y = 1) {
+  constructor(x, y, radius, density = 1) {
     if (radius <= 0) {
       this._radius = 1;
     } else {
@@ -8,10 +8,8 @@ class Ball {
 
     this._x = x;
     this._y = y;
-    this._velocity = velocity;
-    this._weight = weight;
-
-    dom.innerHTML += this.getHtml();
+    this._velocity = new Vector2f(0, 0);
+    this._density = density;
   }
 
   move() {
@@ -19,7 +17,10 @@ class Ball {
     this._y += this._velocity.y;
   }
 
-  getHtml() { return `<div class="ball"></div>`; }
+  setVelocity(dx, dy) {
+    this._velocity.x = dx;
+    this._velocity.y = dy;
+  }
 
   get radius() { return this._radius; }
 
@@ -32,6 +33,7 @@ class Ball {
   get velocity() { return this._velocity; }
   set velocity(value) { this._velocity = value; }
 
-  get weight() { return this._weight; }
-  set weight(value) { this._weight = value; }
+  get speed() { return this._velocity.length; }
+
+  get weight() { return MathHelper.sphereVolume(this._radius) * this._density; }
 }
